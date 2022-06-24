@@ -1,0 +1,12 @@
+/* エラーメッセージ */
+.error{
+    color: red;
+}
+/* 成功時メッセージ */
+.success{
+    color: lightgreen;
+}
+/* Likeボタン */
+.loved i {
+    color: red !important;
+}

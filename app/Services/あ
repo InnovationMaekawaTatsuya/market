@@ -1,0 +1,4 @@
+ Item::select('categories.id', 'categories.name', 'items.name', 'items.price')
+->join('categories', 'categories.id', '=', 'items.category_id')
+->group by('category_id')
+->get();
