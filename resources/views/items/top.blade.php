@@ -6,12 +6,12 @@
     <h1>{{ $title }}</h1>
 
     {{-- 検索フォーム --}}
-    <form method="post" action="{{ route('items.search') }}">
+    <form method="post" action="{{ route('items.search') }}" class="flex">
         @csrf
         <input type="search" placeholder="ユーザ名を入力" name="search"
         @if(isset($search)){
             {{ $search }}
-        }@endif>
+        }@endif">
         <div>
             <button type="submit">検索</button>
             <button>
@@ -28,7 +28,7 @@
     {{-- 商品一覧　--}}
     <div>
         @forelse($items as $item)
-            <div>
+            <div class="col-md-4">
                 @if($item->image != null)
                     <a href="{{ route('items.show', $item) }}"><img src="{{ asset('storage/' . $item->image) }}"></a>
                 @else
@@ -36,9 +36,9 @@
                 @endif
                 <p>{{ $item->description }}</p>
             </div>
-            <div>
+            <div class="col-md-4">
                 <p>商品名：{{ $item->name }}　{{ $item->price }}円</p>
-                <p>カテゴリ：{{ $item->category->name }}（{{ $item->created_at }}）</p>
+                <p>カテゴリ：{{ $item->category->name }}</p>
                 @csrf
                 <p class="favorite-marke">
                 @if($like_model->like_exist(\Auth::user()->id, $item->id) === true)

@@ -19,32 +19,31 @@ use App\Like;
 
 class ItemController extends Controller
 {
-    public function top(){
-
-        $data = [];
+    public function top()
+    {
         // ユーザの投稿の一覧を作成日時の降順で取得
         //withCount('テーブル名')とすることで、リレーションの数も取得できます。
-        $likes_items = Item::withCount('likes')->orderBy('created_at', 'desc')->get();
         $like_model = new Like;
-
-        $items = Item::withCount('likes')->where('user_id', '!=', \Auth::user()->id)->paginate(10);
-        return view('items.top', [
-            'title' => 'トップページ',
-            'items' => $items,
-            'likes_items' => $likes_items,
-            'like_model'=>$like_model,
-        ]);
+        $items = Item::withCount('likes')->where('user_id', '!=', \Auth::user()->id)
+                                         ->paginate(10);
+        $title = 'トップページ';
+        $items = $items;
+        $like_model= $like_model;
+        return view('items.top', compact('title', 'items', 'like_model'));
     }
 
-    public function index(){
-        $items = \Auth::user()->items()->latest()->get();
-        return view('items.index', [
-            'title' => '商品一覧',
-            'items' => $items,
-        ]);
+    public function index()
+    {
+        $items = \Auth::user()->items()
+                              ->latest()
+                              ->get();
+        $title = '商品一覧';
+        $items = $items;
+        return view('items.index', compact('title', 'items'));
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         // 検索フォームで入力された値を取得
         $search = $request->input('search');
         // クエリビルダ
@@ -61,28 +60,28 @@ class ItemController extends Controller
             // 上記で取得した$queryをページネートにし、変数$usersに代入
             $searched_items = $query->paginate(10);
         }
-        return view('items.search', [
-            'title' => '検索結果',
-            'searched_items' => $searched_items,
-        ]);
+        $title = '検索結果';
+        $searched_items = $searched_items;
+        return view('items.search', compact('title', 'searched_items'));
     }
 
-    public function show(Item $item){
-        return view('items.show', [
-            'title' => '商品詳細画面',
-            'item' => $item,
-        ]);
+    public function show(Item $item)
+    {
+        $title = '商品詳細画面';
+        $item = $item;
+        return view('items.show', compact('title', 'item'));
     }
 
-    public function create(){
+    public function create()
+    {
         $categories = Category::all();
-        return view('items.create', [
-            'title' => '商品投稿',
-            'categories' => $categories,
-        ]);
+        $title = '商品投稿';
+        $categories = $categories;
+        return view('items.create', compact('title', 'categories'));
     }
 
-    public function store(ItemRequest $request, FileUploadService $file_service, ItemService $item_service){
+    public function store(ItemRequest $request, FileUploadService $file_service, ItemService $item_service)
+    {
         // saveImageクラス呼び出し
         $path = $file_service->saveImage($request->file('image'));
         // createItemクラス呼び出し
@@ -91,32 +90,34 @@ class ItemController extends Controller
         return redirect()->route('items.index');
     }
 
-    public function edit(Item $item){
-        return view('items.edit', [
-            'title' => '商品編集画面',
-            'item' => $item,
-        ]);
+    public function edit(Item $item)
+    {
+        $title = '商品編集画面';
+        $item = $item;
+        return view('items.edit', compact('title', 'item'));
     }
 
-    public function update(ItemTextRequest $request, Item $item){
+    public function update(ItemTextRequest $request, Item $item)
+    {
         $item->update($request->only(['name', 'description', 'price', 'category_id']));
         session()->flash('success', '商品情報を編集しました。');
         return redirect()->route('items.show', $item);
     }
 
-    public function editImage(Item $item){
+    public function editImage(Item $item)
+    {
         if(\Auth::user()->id === $item->user_id){
-            return view('items.edit_image', [
-                'title' => '商品画像編集',
-                'item' => $item,
-            ]);
+            $title = '商品画像編集';
+            $item = $item;
+            return view('items.edit_image', compact('title', 'item'));
         }else{
             // 不正な編集が疑われる場合は、リダイレクト処理
             return redirect()->route('items.top');
         }
     }
 
-    public function updateImage(ItemImageRequest $request, Item $item, FileUploadService $service){
+    public function updateImage(ItemImageRequest $request, Item $item, FileUploadService $service)
+    {
         // seviceクラス読み込み（画像パス保存）
         $path = $service->saveImage($request->file('image'));
         // seviceクラス読み込み（画像更新）
@@ -125,7 +126,8 @@ class ItemController extends Controller
         return redirect()->route('items.show', $item);
     }
 
-    public function destroy(Item $item){
+    public function destroy(Item $item)
+    {
         // 商品を投稿したユーザーと編集しようとしているユーザーが一致している時のみ編集可能
         if(\Auth::user()->id === $item->user_id){
             // 画像データを削除
@@ -143,20 +145,20 @@ class ItemController extends Controller
     }
 
     // 商品購入フォーム取得
-    public function orderConfirm(Item $item){
-        return view('items.order_confirm', [
-            'title' => '購入する商品の情報を確認',
-            'item' => $item,
-        ]);
+    public function orderConfirm(Item $item)
+    {
+        $title = '購入する商品の情報を確認';
+        $item = $item;
+        return view('items.order_confirm', compact('title', 'item'));
     }
 
-    public function ordered(ItemService $service, Item $item){
+    public function ordered(ItemService $service, Item $item)
+    {
         $user = \Auth::user();
         $service->ordered_item($item);
-        return view('items.ordered', [
-            'title' => 'ご購入ありがとうございました',
-            'item' => $item,
-        ]);
+        $title = 'ご購入ありがとうございました';
+        $item = $item;
+        return view('items.ordered', compact('title', 'item'));
     }
 
     public function ajaxlike(Request $request)
@@ -169,7 +171,8 @@ class ItemController extends Controller
         // 空でない（既にいいねしている）なら
         if ($like->like_exist($id, $item_id)) {
             //likesテーブルのレコードを削除
-            $like = Like::where('item_id', $item_id)->where('user_id', $id)->delete();
+            $like = Like::where('item_id', $item_id)->where('user_id', $id)
+                                                    ->delete();
         } else {
             //空（まだ「いいね」していない）ならlikesテーブルに新しいレコードを作成する
             $like = new Like;
@@ -179,7 +182,8 @@ class ItemController extends Controller
         }
 
         //loadCountとすればリレーションの数を○○_countという形で取得できる（今回の場合はいいねの総数）
-        $itemLikesCount = $item->loadCount('likes')->likes_count;
+        $itemLikesCount = $item->loadCount('likes')
+                               ->likes_count;
 
         //一つの変数にajaxに渡す値をまとめる
         //今回ぐらい少ない時は別にまとめなくてもいいけど一応。笑

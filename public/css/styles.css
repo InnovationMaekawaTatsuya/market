@@ -1,3 +1,7 @@
+/* フレックス */
+.flex{
+    display: flex;
+}
 /* エラーメッセージ */
 .error{
     color: red;
@@ -9,4 +13,8 @@
 /* Likeボタン */
 .loved i {
     color: red !important;
+}
+/* ヘッダー */
+.header_nav li{
+    list-style-type: none;
 }

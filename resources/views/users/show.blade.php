@@ -7,9 +7,9 @@
 
     <div>
         @if($user->image !== null)
-            <img src="{{ asset('storage/' . $user->image) }}">
+            <img src="{{ asset('storage/' . $user->image) }}" class="img-responsive">
         @else
-            <img src="{{ asset('images/no_image.png') }}">
+            <img src="{{ asset('images/no_image.png') }}" class="img-responsive">
         @endif
         <br><a href="{{ route('users.edit_image', $user) }}">画像を編集</a>
     </div>

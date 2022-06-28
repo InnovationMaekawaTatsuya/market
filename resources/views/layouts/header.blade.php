@@ -1,21 +1,21 @@
 @auth
-    <ul class="header_nav">
-        <div>
+    <ul class="header_nav flex row">
+        <div class="col-md-4">
             <a href="/">Market</a>
         </div>
-        <li>
+        <li class="col-md-4">
             <p>こんにちは、{{ Auth::user()->name }}さん！</p>
         </li>
-        <li>
+        <li class="col-md-4">
             <a href="{{ route('users.show', Auth::user()->id) }}">プロフィール</a>
         </li>
-        <li>
+        <li class="col-md-4">
             <a href="{{ route('likes.index', Auth::user()->id) }}">お気に入り一覧</a>
         </li>
-        <li>
+        <li class="col-md-4">
             <a href="{{ route('items.index') }}">商品一覧</a>
         </li>
-        <li>
+        <li class="col-md-4">
             <form method="post" action="{{ route('logout') }}">
                 @csrf
                 <input type="submit" value="ログアウト">
@@ -25,7 +25,7 @@
 @endauth
 
 @guest
-    <ul class="header_nav">
+    <ul class="header_nav flex">
         <li>
             <a href="{{ route('register') }}">サインアップ</a>
         </li>
