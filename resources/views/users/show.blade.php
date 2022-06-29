@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>プロフィール</h1>
 
     <div>
         @if($user->image !== null)
@@ -33,7 +33,7 @@
 
     {{-- 購入履歴 --}}
     <div>
-        @forelse($ordered_items as $ordered_item)
+        @forelse($orderedItems as $ordered_item)
             <p>{{ $ordered_item->name }}：{{ $ordered_item->price }}円　出品者　{{ $ordered_item->user->name }}</p>
         @empty
             <p>過去に購入した商品がありません<p>

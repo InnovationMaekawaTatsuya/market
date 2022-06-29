@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>ご購入ありがとうございました</h1>
 
     <div>
         <p>商品名：{{ $item->name }}</p>

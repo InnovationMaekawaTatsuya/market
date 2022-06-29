@@ -19,25 +19,20 @@ class UserController extends Controller
     {
         // ログイン中のユーザーと一致した時のみプロフィールを表示
         if(\Auth::user()->id === $user->id){
-            $ordered_items = $user->orderItems()
+            $orderedItems = $user->orderItems()
                                   ->latest()
                                   ->get();
-            $title = 'プロフィール';
-            $user = $user;
-            $ordered_items = $ordered_items;
-            return view('users.show', compact('title', 'user', 'ordered_items'));
+            return view('users.show', compact('user', 'orderedItems'));
         }else{
             // 一致しない時はトップページにリダイレクト
-            return redirect()->route('top');
+            return redirect()->route('items.top');
         }
     }
 
     public function edit(User $user)
     {
         if(\Auth::user()->id === $user->id){
-            $title = 'プロフィール編集';
-            $user = $user;
-            return view('users.edit', compact('title', 'user'));
+            return view('users.edit', compact('user'));
         }else{
             // 一致しない時はトップページにリダイレクト
             return redirect()->route('top');
@@ -55,13 +50,7 @@ class UserController extends Controller
     {
         // ログイン中のユーザーと一致した時のみプロフィール画像を編集可能
         if (\Auth::user()->id === $user->id) {
-            // return view('users.edit_image', [
-            //     'title' => 'プロフィール画像編集',
-            //     'user' => $user,
-            // ]);
-            $title = 'プロフィール画像編集';
-            $user = $user;
-            return view('users.edit_image', compact('title', 'user'));
+            return view('users.edit_image', compact('user'));
         }else{
             // 一致しない時はトップページにリダイレクト
             return redirect()->route('top');

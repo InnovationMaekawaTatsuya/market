@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>商品一覧</h1>
 
     {{--新規出品ボタン--}}
     <form method="get" action="{{ route('items.create') }}">

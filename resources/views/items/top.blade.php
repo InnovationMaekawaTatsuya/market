@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>トップページ</h1>
 
     {{-- 検索フォーム --}}
     <form method="post" action="{{ route('items.search') }}" class="flex">
@@ -41,7 +41,7 @@
                 <p>カテゴリ：{{ $item->category->name }}</p>
                 @csrf
                 <p class="favorite-marke">
-                @if($like_model->like_exist(\Auth::user()->id, $item->id) === true)
+                @if(\Auth::user()->id = $item->user_id)
                     <span class="js-like-toggle loved" data-itemid="{{ $item->id }}"><i class="fas fa-heart">@csrf</i></span>
                 @else
                     <span class="js-like-toggle" data-itemid="{{ $item->id }}"><i class="fas fa-heart"></i></span>
@@ -54,6 +54,7 @@
         @endforelse
     </div>
 
+    {{-- ページネーション --}}
     <div>
         {{ $items->links() }}
     </div>

@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>商品詳細画面</h1>
 
     <div>
         <p>商品名：{{ $item->name }}</p>

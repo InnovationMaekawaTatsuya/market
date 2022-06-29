@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>新規出品</h1>
 
 
     <form method="post" action="{{ route('items.store') }}" enctype="multipart/form-data">
@@ -20,8 +20,8 @@
         <div>
             <label>カテゴリー：
                 <select name="category_id">
-                    @foreach($categories as $index => $category)
-                        <option value="{{ $index }}">{{ $category->name }}</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
             </label>

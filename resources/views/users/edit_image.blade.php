@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>プロフィール画像編集</h1>
 
     @if($user->image !== null)
             <img src="{{ \Storage::url($user->image) }}" class="center">
