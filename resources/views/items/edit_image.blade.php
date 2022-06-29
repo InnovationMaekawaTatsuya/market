@@ -3,7 +3,7 @@
 @section('title, $title')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>商品画像編集</h1>
 
     @if($item->image != '')
         <img src="{{ \Storage::url($item->image) }}">

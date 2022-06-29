@@ -2,7 +2,7 @@
 
 @section('content')
     
-    <h1>{{ $title }}</h1>
+    <h1>検索結果</h1>
 
     {{-- 検索フォーム --}}
     <form method="post" action="{{route('items.search')}}">
@@ -14,12 +14,12 @@
         <div>
             <button type="submit">検索</button>
             <button>
-                <a href="{{ route('items.search') }}">クリア</a>
+                <a href="{{ route('items.top') }}">クリア</a>
             </button>
         </div>
     </form>
    
-    @forelse($searched_items as $item)
+    @forelse($searchedItems as $item)
         <div>
             @if($item->image != null)
                 <a href="{{ route('items.show', $item) }}"><img src="{{ asset('storage/' . $item->image) }}"></a>
@@ -30,10 +30,15 @@
         </div>
         <div>
             <p>商品名：{{ $item->name }}　{{ $item->price }}円</p>
-            <p>カテゴリ：{{ $item->category->name }}（{{ $item->created_at }}）</p>
+            <p>カテゴリ：{{ $item->category->name }}</p>
         </div>
     @empty
         <p>検索結果がありません。</p>
     @endforelse
+
+    {{-- ページネーション --}}
+    <div>
+        {{ $searchedItems->links() }}
+    </div>
 
 @endsection

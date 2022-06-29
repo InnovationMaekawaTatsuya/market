@@ -23,13 +23,9 @@ class ItemController extends Controller
     {
         // ユーザの投稿の一覧を作成日時の降順で取得
         //withCount('テーブル名')とすることで、リレーションの数も取得できます。
-        $like_model = new Like;
         $items = Item::withCount('likes')->where('user_id', '!=', \Auth::user()->id)
                                          ->paginate(10);
-        $title = 'トップページ';
-        $items = $items;
-        $like_model= $like_model;
-        return view('items.top', compact('title', 'items', 'like_model'));
+        return view('items.top', compact('items'));
     }
 
     public function index()
@@ -37,9 +33,7 @@ class ItemController extends Controller
         $items = \Auth::user()->items()
                               ->latest()
                               ->get();
-        $title = '商品一覧';
-        $items = $items;
-        return view('items.index', compact('title', 'items'));
+        return view('items.index', compact('items'));
     }
 
     public function search(Request $request)
@@ -50,51 +44,43 @@ class ItemController extends Controller
         $query = Item::query();
         if ($search) {
             // 全角スペースを半角に変換
-            $spaceConversion = mb_convert_kana($search, 's');
+            $spaceConversion = Item::FilterSpace($search, 's');
             // 単語を半角スペースで区切り、配列にする（例："山田 翔" → ["山田", "翔"]）
-            $wordArraySearched = preg_split('/[\s,]+/', $spaceConversion, -1, PREG_SPLIT_NO_EMPTY);
+            $wordArraySearched = Item::FilterArray($search, $spaceConversion);
             // 単語をループで回し、ユーザーネームと部分一致するものがあれば、$queryとして保持される
             foreach($wordArraySearched as $value) {
-                $query->where('name', 'like', '%'.$value.'%');
+                $query = Item::FilterRetention($value);
             }
             // 上記で取得した$queryをページネートにし、変数$usersに代入
-            $searched_items = $query->paginate(10);
+            $searchedItems = Item::Substitution($query, $search);
         }
-        $title = '検索結果';
-        $searched_items = $searched_items;
-        return view('items.search', compact('title', 'searched_items'));
+        return view('items.search', compact('searchedItems'));
     }
 
     public function show(Item $item)
     {
-        $title = '商品詳細画面';
-        $item = $item;
-        return view('items.show', compact('title', 'item'));
+        return view('items.show', compact('item'));
     }
 
     public function create()
     {
         $categories = Category::all();
-        $title = '商品投稿';
-        $categories = $categories;
-        return view('items.create', compact('title', 'categories'));
+        return view('items.create', compact('categories'));
     }
 
-    public function store(ItemRequest $request, FileUploadService $file_service, ItemService $item_service)
+    public function store(ItemRequest $request, FileUploadService $fileService, ItemService $itemService)
     {
         // saveImageクラス呼び出し
-        $path = $file_service->saveImage($request->file('image'));
+        $path = $fileService->saveImage($request->file('image'));
         // createItemクラス呼び出し
-        $create_item = $item_service->create_item($request, $path);
+        $createItem = $itemService->createItem($request, $path);
         session()->flash('success', '出品が完了しました。');
         return redirect()->route('items.index');
     }
 
     public function edit(Item $item)
     {
-        $title = '商品編集画面';
-        $item = $item;
-        return view('items.edit', compact('title', 'item'));
+        return view('items.edit', compact('item'));
     }
 
     public function update(ItemTextRequest $request, Item $item)
@@ -107,9 +93,7 @@ class ItemController extends Controller
     public function editImage(Item $item)
     {
         if(\Auth::user()->id === $item->user_id){
-            $title = '商品画像編集';
-            $item = $item;
-            return view('items.edit_image', compact('title', 'item'));
+            return view('items.edit_image', compact('item'));
         }else{
             // 不正な編集が疑われる場合は、リダイレクト処理
             return redirect()->route('items.top');
@@ -147,31 +131,27 @@ class ItemController extends Controller
     // 商品購入フォーム取得
     public function orderConfirm(Item $item)
     {
-        $title = '購入する商品の情報を確認';
-        $item = $item;
-        return view('items.order_confirm', compact('title', 'item'));
+        return view('items.order_confirm', compact('item'));
     }
 
     public function ordered(ItemService $service, Item $item)
     {
         $user = \Auth::user();
-        $service->ordered_item($item);
-        $title = 'ご購入ありがとうございました';
-        $item = $item;
-        return view('items.ordered', compact('title', 'item'));
+        $service->orderedItem($item);
+        return view('items.ordered', compact('item'));
     }
 
     public function ajaxlike(Request $request)
     {
         $id = \Auth::user()->id;
-        $item_id = $request->item_id;
+        $itemId = $request->item_id;
         $like = new Like;
-        $item = Item::find($item_id);
+        $item = Item::find($itemId);
 
         // 空でない（既にいいねしている）なら
-        if ($like->like_exist($id, $item_id)) {
+        if ($like->like_exist($id, $itemId)) {
             //likesテーブルのレコードを削除
-            $like = Like::where('item_id', $item_id)->where('user_id', $id)
+            $like = Like::where('item_id', $itemId)->where('user_id', $id)
                                                     ->delete();
         } else {
             //空（まだ「いいね」していない）ならlikesテーブルに新しいレコードを作成する

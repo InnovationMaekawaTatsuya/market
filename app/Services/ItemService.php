@@ -7,7 +7,7 @@
 
     class ItemService
     {
-        public function create_item($request, $path){
+        public function createItem($request, $path){
             if ( isset($request) ) {
                 Item::create([
                     'user_id' => \Auth::user()->id,
@@ -20,7 +20,7 @@
             }
         }
 
-        public function ordered_item($item){
+        public function orderedItem($item){
             if ( isset($item) ) {
                 $order_item = Order::create([
                     'user_id' => $item->user_id,

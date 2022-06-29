@@ -1,23 +1,23 @@
 @extends('layouts.default')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>お気に入り商品一覧</h1>
     <div>
-        @forelse($like_items as $like_item)
-            @if($like_item->image != null)
-                <a href="{{ route('items.show', $like_item) }}"><img src="{{ asset('storage/' . $like_item->image) }}"></a>
+        @forelse($likeItems as $likeItem)
+            @if($likeItem->image != null)
+                <a href="{{ route('items.show', $likeItem) }}"><img src="{{ asset('storage/' . $likeItem->image) }}"></a>
             @else
-                <a href="{{ route('items.show', $like_item) }}"><img src="{{ asset('images/no_image.png') }}"></a>
+                <a href="{{ route('items.show', $likeItem) }}"><img src="{{ asset('images/no_image.png') }}"></a>
             @endif
+            <p>{{ $likeItem->description }}</p>
+            <div>
+                <p>商品名：{{ $likeItem->name }}　{{ $likeItem->price }}円</p>
+            </div>
+            <div>
+                <p>カテゴリ：{{ $likeItem->category->name }}</p>
+            </div>
         @empty
             <p>いいねした商品がありません。</p>
         @endforelse
-        <p>{{ $like_item->description }}</p>
-    </div>
-    <div>
-        <p>商品名：{{ $like_item->name }}　{{ $like_item->price }}円</p>
-    </div>
-    <div>
-        <p>カテゴリ：{{ $like_item->category->name }}（{{ $like_item->created_at }}）</p>
     </div>
 @endsection

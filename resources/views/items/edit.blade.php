@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('content')
-    <h1>{{ $title }}</h1>
+    <h1>商品情報編集</h1>
 
     <div>
         <form method="post" action="{{ route('items.update', $item) }}" >
